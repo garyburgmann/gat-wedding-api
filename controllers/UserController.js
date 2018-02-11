@@ -8,23 +8,23 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
 router.get('/', function (req, res) {
-  res.status(200).send('User @list route');
+  res.status(200).send({msg: 'User @list route'});
 });
 
 router.post('/', function (req, res) {
-  res.status(200).send('User @create route');
+  res.status(200).send({msg: 'User @create route.', req: req.body});
 });
 
 router.get('/:id', function (req, res) {
-  res.status(200).send('User @retrieve route for id: ' + req.params.id);
+  res.status(200).send({msg: 'User @retrieve route for id: ' + req.params.id});
 });
 
 router.delete('/:id', function (req, res) {
-  res.status(200).send('User @destroy route for id: ', req.params.id);
+  res.status(200).send({msg: 'User @destroy route for id: ' + req.params.id, req: req.body});
 });
 
 router.patch('/:id', function (req, res) {
-  res.status(200).send('User @update route for id: ', req.params.id);
+  res.status(200).send({msg: 'User @update route for id: ' + req.params.id, req: req.body});
 });
 
 
