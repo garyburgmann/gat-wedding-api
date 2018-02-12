@@ -1,10 +1,13 @@
 var express = require('express');
 var db = require('./db');  // mongo db connection
+var keys = require('./env/keys');
 
 
 var app = express();
 
-var UserController = require('./controllers/UserController');
-app.use('/users', UserController);
+app.set('secretKey', keys.APP_SECRET);
+
+require('./routes')(app);
+
 
 module.exports = app;
