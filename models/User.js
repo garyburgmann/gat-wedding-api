@@ -5,7 +5,7 @@ var keys = require('../env/keys');
 let mongooseHidden = require('mongoose-hidden')()
 
 
-var UserSchema = new mongoose.Schema({  
+var UserSchema = new mongoose.Schema({
   first_name: String,
   last_name: String,
   username: { type: String, required: true, index: { unique: true } },
@@ -15,26 +15,17 @@ var UserSchema = new mongoose.Schema({
 });
 
 UserSchema.plugin(mongooseHidden)
-UserSchema.set('toJSON', 
-  { 
-    virtuals: true, 
+UserSchema.set('toJSON',
+  {
+    virtuals: true,
     transform: (doc, ret, options) => {
           ret.id = ret._id;
           delete ret._id;
           delete ret.__v;
           delete ret.password;
           return ret;
-  } 
+  }
 });
-// UserSchema.methods.toJSON = (user) => {
-//   return {
-//     username: user.username,
-//     email: user.email,
-//     id: user.id,
-//     first_name: user.first_name,
-//     last_name: user.last_name
-//   }
-// }
 
 UserSchema.statics.setPassword = (password) => {
   return bcrypt.hashSync(password, 4);
@@ -71,12 +62,12 @@ UserSchema.statics.checkToken = (req, res, next) => {
     res.status(400).send({ success: false, message: 'No token provided' });
   }
 
-  jwt.verify(token, keys.APP_SECRET, (err, decoded) => {      
+  jwt.verify(token, keys.APP_SECRET, (err, decoded) => {
     if (err) {
-      res.status(400).send({ success: false, message: 'Failed to authenticate token.' });    
+      res.status(400).send({ success: false, message: 'Failed to authenticate token.' });
     } else {
       // if everything is good, save to request for use in other routes
-      req.decoded = decoded;    
+      req.decoded = decoded;
       next();
     }
   });
@@ -84,7 +75,7 @@ UserSchema.statics.checkToken = (req, res, next) => {
 
 UserSchema.statics.loginByEmail = (password, email) => {
   User.findOne({
-    email: req.body.email 
+    email: req.body.email
   }, (err, user) => {
     if (err || !user) {
       res.status(400).send({ success: false, message: 'Email not found', data: req.body });
@@ -97,7 +88,7 @@ UserSchema.statics.loginByEmail = (password, email) => {
 
 UserSchema.statics.loginByEmail = (req, res) => {
   mongoose.model('User').findOne({
-    email: req.body.email 
+    email: req.body.email
   }, (err, user) => {
     if (err || !user) {
       res.status(400).send({ success: false, message: 'Email not found', data: req.body });
@@ -112,7 +103,7 @@ UserSchema.statics.loginByEmail = (req, res) => {
 
 UserSchema.statics.loginByUsername = (req, res) => {
   mongoose.model('User').findOne({
-    username: req.body.username 
+    username: req.body.username
   }, (err, user) => {
     if (err || !user) {
       res.status(400).send({ success: false, message: 'Username not found', data: req.body });
