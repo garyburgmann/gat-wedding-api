@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const VerifyToken = require('../middleware/VerifyToken');
 const User = require('../models/User');
-
 
 const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -17,11 +17,25 @@ router.post('/', (req, res) => {
 });
 
 // example with token middleware
-router.get('/:id', User.checkToken, (req, res) => {
-  if (req.decoded.userId == req.params.id){
-    res.status(200).send({success: true, message: 'User @retrieve route for id: ' + req.params.id, data: req.decoded});
+router.get('/:id', VerifyToken, (req, res) => {
+  if (req.decoded.id == req.params.id){
+    // return res.status(200).send({success: true, message: 'User @retrieve route for id: ' + req.params.id, data: req.decoded});
+
+    User.findById(req.decoded.id, { password: 0 }, (err, user) => {
+      if (err) {
+        return res.status(500).send("There was a problem finding the user.");
+      }
+      if (!user) {
+        return res.status(404).send("No user found.");
+      }
+      return res.status(200).send({ success: true, 
+                                    message: 'User @retrieve route for id: ' + req.params.id, 
+                                    data: user});
+    });
   } else {
-    res.status(403).send({success: false, message: 'User @retrieve route for id - not authorised to view user ' + req.params.id, data: req.decoded});
+    return res.status(403).send({ success: false, 
+                                  message: 'User @retrieve route for id - not authorised to view user ' + req.params.id, 
+                                  data: req.decoded });
   }
 });
 

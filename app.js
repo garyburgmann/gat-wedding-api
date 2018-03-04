@@ -1,11 +1,11 @@
 var express = require('express');
 var db = require('./db');  // mongo db connection
-var keys = require('./env/keys');
+var secrets = require('./config/secrets');
 
 
 var app = express();
 
-app.set('secretKey', keys.APP_SECRET);
+app.set('secretKey', secrets.APP_SECRET);
 
 require('./routes')(app);
 

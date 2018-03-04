@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var keys = require('./env/keys');
+var mongo = require('./config/mongo');
 
 
-mongoose.connect(keys.MONGO_URI);
+mongoose.connect(mongo.MONGO_URI);
