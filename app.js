@@ -1,9 +1,9 @@
-var express = require('express');
-var db = require('./db');  // mongo db connection
-var secrets = require('./config/secrets');
+const express = require('express');
+const db = require('./db');  // mongo db connection
+const secrets = require('./config/secrets');
 
 
-var app = express();
+const app = express();
 
 app.set('secretKey', secrets.APP_SECRET);
 
