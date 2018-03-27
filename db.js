@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const mongo = require('./config/mongo');
+const { MONGO } = require('./settings');
 
 
-mongoose.connect(mongo.MONGO_URI);
+mongoose.connect(MONGO.MONGO_URI);

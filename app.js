@@ -1,13 +1,14 @@
+require('dotenv').load();
 const express = require('express');
 const db = require('./db');  // mongo db connection
-const secrets = require('./config/secrets');
+const {APP_SECRET} = require('./settings');
 
 
 const app = express();
 
-app.set('secretKey', secrets.APP_SECRET);
+app.set('secretKey', APP_SECRET);
 
+// require('./routes')(app);
 require('./routes')(app);
-
 
 module.exports = app;

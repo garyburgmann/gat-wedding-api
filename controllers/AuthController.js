@@ -1,18 +1,8 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
-const _ = require('lodash');
 const User = require('../models/User');
-const secrets = require('../config/secrets');
+const { setToken, setPassword, checkPassword } = require('../services/AuthService');
 
 
-const router = express.Router();
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(bodyParser.json());
-
-
-router.post('/register', (req, res) => {
+exports.register = (req, res) => {
   // return res.status(200).send({msg: 'Auth @register route.', req: req.body});
   if (!req.body.password) {
     return res.status(400).send({ 
@@ -22,7 +12,7 @@ router.post('/register', (req, res) => {
     });
   }
 
-  const hashedPassword = bcrypt.hashSync(req.body.password, 8);
+  const hashedPassword = setPassword(req.body.password, 8);
 
   User.create({
     username: req.body.username,
@@ -30,9 +20,7 @@ router.post('/register', (req, res) => {
     password: hashedPassword
   })
     .then((user) => {
-      const token = jwt.sign({ id: user._id }, secrets.APP_SECRET, {
-        expiresIn: 86400 // expires in 24 hours
-      });
+      const token = setToken({ id: user._id });
 
       // remove password in user object before returning
       const returnUser = JSON.parse(JSON.stringify(user));
@@ -46,18 +34,18 @@ router.post('/register', (req, res) => {
       });
     })
     .catch((err) => {
+      console.log(err);
       return res.status(400).send({ 
         success: false, 
         message: 'There was a problem adding the information to the database.', 
         data: req.body, 
-        error: err.message 
+        error: `${err.code}: ${err.name}`
       });
     });
+};
 
-});
 
-
-router.post('/login', (req, res) => {
+exports.login = (req, res) => {
 
   if ((!req.body.username && !req.body.email) || !req.body.password) {
     return res.status(400).send({ 
@@ -110,11 +98,11 @@ router.post('/login', (req, res) => {
         });
       });
   }
-});
+};
 
 
 sendTokenAndUser = (req, res, user) => {
-  const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+  const passwordIsValid = checkPassword(req.body.password, user.password);
   if (!passwordIsValid) {
     return res.status(403).send({ 
       success: false, 
@@ -123,10 +111,7 @@ sendTokenAndUser = (req, res, user) => {
     });
   }
 
-  const token = jwt.sign({ id: user._id }, secrets.APP_SECRET, {
-    expiresIn: 60 * 60 * 24 // expires in 24 hours - in seconds
-  });
-  
+  const token = setToken({ id: user._id });
   // remove password in user object before returning
   const returnUser = JSON.parse(JSON.stringify(user));
   delete returnUser.password;
@@ -138,6 +123,3 @@ sendTokenAndUser = (req, res, user) => {
     token: token 
   });
 }
-
-
-module.exports = router;

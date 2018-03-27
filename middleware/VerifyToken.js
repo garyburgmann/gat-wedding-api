@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const secrets = require('../config/secrets');
+const { APP_SECRET } = require('../settings');
+const {checkToken} = require('../services/AuthService');
 
 
 verifyToken = (req, res, next) => {
@@ -25,18 +25,19 @@ verifyToken = (req, res, next) => {
     });
   }
 
-  jwt.verify(token, secrets.APP_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(400).send({ 
-        success: false, 
-        message: 'Failed to authenticate token' 
-      });
-    } else {
-      // if everything is good, save to request for use in other routes
-      req.decoded = decoded;
-      next();
-    }
-  });
+  const {err, decoded} = checkToken(token);
+
+  if (err) {
+    return res.status(400).send({ 
+      success: false, 
+      message: 'Failed to authenticate token' 
+    });
+  } else {
+    // if everything is good, save to request for use in other routes
+    req.decoded = decoded;
+    next();
+  }
+  // });
 }
 
 module.exports = verifyToken;

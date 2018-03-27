@@ -1,47 +1,42 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const VerifyToken = require('../middleware/VerifyToken');
 const User = require('../models/User');
 
-const router = express.Router();
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(bodyParser.json());
 
-
-router.get('/', (req, res) => {
-  res.status(200).send({
+exports.list = async (req, res) => {
+  const users = await User.find();
+  return res.status(200).send({
     success: true, 
-    message: 'User @list route'
+    message: 'User @list route',
+    data: users
   });
-});
+};
 
-router.post('/', (req, res) => {
-  res.status(200).send({
+exports.create = (req, res) => {
+  return res.status(200).send({
     success: true, 
     message: 'User @create route.', 
     data: req.body
   });
-});
+};
 
 // example with token middleware
-router.get('/:id', VerifyToken, (req, res) => {
+exports.show = async (req, res) => {
   if (req.decoded.id == req.params.id){
     // return res.status(200).send({success: true, message: 'User @retrieve route for id: ' + req.params.id, data: req.decoded});
 
-    User.findById( req.decoded.id, { password: 0 } )
-      .then((user) => {
-        if (!user) {
-          return res.status(404).send("No user found.");
-        }
-        return res.status(200).send({ 
-          success: true, 
-          message: 'User @retrieve route for id: ' + req.params.id, 
-          data: user
-        });
-      })
-      .catch((err) => {
-        return res.status(500).send("There was a problem finding the user.");
-      });
+    const user = await User.findById(req.decoded.id);
+     
+    if (!user) {
+      return res.status(404).send("No user found.");
+    }
+    return res.status(200).send({ 
+      success: true, 
+      message: 'User @retrieve route for id: ' + req.params.id, 
+      data: user
+    });
+      // })
+      // .catch((err) => {
+      //   return res.status(500).send("There was a problem finding the user.");
+      // });
   } else {
     return res.status(403).send({ 
       success: false, 
@@ -49,23 +44,20 @@ router.get('/:id', VerifyToken, (req, res) => {
       data: req.decoded
     });
   }
-});
+};
 
-router.delete('/:id', (req, res) => {
-  res.status(200).send({
-    success: true, 
-    message: 'User @destroy route for id: ' + req.params.id, 
-    data: req.body
-  });
-});
-
-router.patch('/:id', (req, res) => {
-  res.status(200).send({
+exports.update = (req, res) => {
+  return res.status(200).send({
     success: true, 
     message: 'User @update route for id: ' + req.params.id, 
     data: req.body
   });
-});
+};
 
-
-module.exports = router;
+exports.destroy = (req, res) => {
+  return res.status(200).send({
+    success: true, 
+    message: 'User @destroy route for id: ' + req.params.id, 
+    data: req.body
+  });
+};

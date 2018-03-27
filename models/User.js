@@ -1,7 +1,4 @@
 var mongoose = require('mongoose');
-var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
-var bcrypt = require('bcryptjs');
-var secrets = require('../config/secrets');
 
 
 var UserSchema = new mongoose.Schema({
@@ -12,5 +9,4 @@ var UserSchema = new mongoose.Schema({
 });
 
 
-mongoose.model('User', UserSchema);
-module.exports = mongoose.model('User');
+module.exports = mongoose.model('User', UserSchema);
