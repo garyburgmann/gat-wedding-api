@@ -1,5 +1,0 @@
-# ignore mongo login details
-mongo.js
-
-# ignore app secret
-secrets.js
