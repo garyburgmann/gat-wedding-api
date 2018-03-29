@@ -1,14 +1,16 @@
 const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 const { MAIL } = require('../settings');
 
 
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport(smtpTransport({
   service: MAIL.MAIL_SERVICE,
+  host: MAIL.MAIL_HOST,
   auth: {
          user: MAIL.MAIL_USER,
          pass: MAIL.MAIL_PASS
   }
-});
+}));
 
 module.exports = {
   sendMail: async (to, subject, text) => {
