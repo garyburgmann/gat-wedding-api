@@ -7,7 +7,7 @@ router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
 const AuthController = require('../controllers/AuthController');
-router.post('/auth/register', AuthController.register);
+// router.post('/auth/register', AuthController.register);
 router.post('/auth/login', AuthController.login);
 
 const UserController = require('../controllers/UserController');
