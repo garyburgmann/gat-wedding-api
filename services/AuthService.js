@@ -6,7 +6,7 @@ const { APP_SECRET } = require('../settings');
 module.exports = {
 
   setToken: (payload) => {
-    console.log(payload, APP_SECRET);
+    // console.log(payload, APP_SECRET);
     return jwt.sign(payload, APP_SECRET, {
       expiresIn: 60 * 60 * 24 // expires in 24 hours - in seconds
     });
