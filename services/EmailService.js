@@ -17,10 +17,16 @@ module.exports = {
       from: MAIL.MAIL_USER, // sender address
       to: to, // list of receivers
       subject: subject, // Subject line
-      html: `<p>${text}</p>`// plain text body
+      html: `<p>${text}</p>`,// plain text body
+      dsn: {
+        id: to,
+        return: 'headers',
+        notify: ['failure', 'delay'],
+        recipient: MAIL.MAIL_USER
+      }
     };
 
-    try { 
+    try {
       const info = await transporter.sendMail(mailOptions);
       return {info: info};
     } catch (err) {
