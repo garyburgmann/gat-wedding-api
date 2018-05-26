@@ -18,6 +18,10 @@ router.get('/users/:id', VerifyToken, UserController.show);
 router.put('/users/:id', UserController.update);
 router.delete('/users/:id', UserController.destroy);
 
+const RSVPController = require('../controllers/RSVPController');
+router.post('/rsvp', RSVPController.create);
+router.put('/rsvp/:id', RSVPController.update);
+
 // mail send
 router.post('/email', async (req, res) => {
   const {err, info} = await sendMail(req.body.to, req.body.subject, req.body.text);
