@@ -1,14 +1,14 @@
 const User = require('../models/User');
-const { setToken, setPassword, checkPassword } = require('../services/AuthService');
+const { setToken, setPassword, checkPassword, checkToken } = require('../services/AuthService');
 
 
 exports.register = (req, res) => {
   // return res.status(200).send({msg: 'Auth @register route.', req: req.body});
   if (!req.body.password) {
-    return res.status(400).send({ 
-      success: false, 
-      message: 'Password missing in request', 
-      data: req.body 
+    return res.status(400).send({
+      success: false,
+      message: 'Password missing in request',
+      data: req.body
     });
   }
 
@@ -27,18 +27,18 @@ exports.register = (req, res) => {
       delete returnUser.password;
 
       return res.status(201).send({
-        success: true, 
-        message: 'New user successfully created', 
+        success: true,
+        message: 'New user successfully created',
         data: returnUser,
         token: token
       });
     })
     .catch((err) => {
       console.log(err);
-      return res.status(400).send({ 
-        success: false, 
-        message: 'There was a problem adding the information to the database.', 
-        data: req.body, 
+      return res.status(400).send({
+        success: false,
+        message: 'There was a problem adding the information to the database.',
+        data: req.body,
         error: `${err.code}: ${err.name}`
       });
     });
@@ -48,30 +48,30 @@ exports.register = (req, res) => {
 exports.login = (req, res) => {
 
   if ((!req.body.username && !req.body.email) || !req.body.password) {
-    return res.status(400).send({ 
-      success: false, 
-      message: 'Missing data for authentication', 
-      data: req.body 
+    return res.status(400).send({
+      success: false,
+      message: 'Missing data for authentication',
+      data: req.body
     });
-  } 
-    
+  }
+
   if (req.body.email) {
     User.findOne({
       email: req.body.email
     }).select("+password")
       .then((user) => {
         if (!user) {
-          return res.status(400).send({ 
-            success: false, 
-            message: 'User with that email not found', 
-            data: req.body 
+          return res.status(400).send({
+            success: false,
+            message: 'User with that email not found',
+            data: req.body
           });
-        } 
+        }
         sendTokenAndUser(req, res, user);
       })
       .catch((err) => {
         return res.status(500).send({
-          success: false, 
+          success: false,
           message: 'Error on the server',
           error:  err
         });
@@ -82,17 +82,17 @@ exports.login = (req, res) => {
     }).select("+password")
       .then((user) => {
         if (!user) {
-          return res.status(400).send({ 
-            success: false, 
-            message: 'User with that username not found', 
-            data: req.body 
+          return res.status(400).send({
+            success: false,
+            message: 'User with that username not found',
+            data: req.body
           });
-        } 
+        }
         sendTokenAndUser(req, res, user);
       })
       .catch((err) => {
         return res.status(500).send({
-          success: false, 
+          success: false,
           message: 'Error on the server',
           error: err
         });
@@ -100,14 +100,32 @@ exports.login = (req, res) => {
   }
 };
 
+exports.me = async (req, res) => {
+  // return res.status(200).send({success: true, message: 'User @retrieve route for id: ' + req.params.id, data: req.decoded});
+  const user = await User.findById(req.decoded.id);
+
+  if (!user) {
+    return res.status(404).send({
+      errors: [
+        "No user found."
+      ]
+    });
+  }
+  return res.status(200).send({
+    success: true,
+    message: 'Auth @me route for id: ' + req.decoded.id,
+    data: user
+  });
+};
+
 
 sendTokenAndUser = (req, res, user) => {
   const passwordIsValid = checkPassword(req.body.password, user.password);
   if (!passwordIsValid) {
-    return res.status(403).send({ 
-      success: false, 
-      message: 'Incorrect password.', 
-      data: req.body 
+    return res.status(403).send({
+      success: false,
+      message: 'Incorrect password.',
+      data: req.body
     });
   }
 
@@ -116,10 +134,10 @@ sendTokenAndUser = (req, res, user) => {
   const returnUser = JSON.parse(JSON.stringify(user));
   delete returnUser.password;
 
-  return res.status(200).send({ 
-    success: true, 
-    message: 'Successfully logged in.', 
-    data: returnUser, 
-    token: token 
+  return res.status(200).send({
+    success: true,
+    message: 'Successfully logged in.',
+    data: returnUser,
+    token: token
   });
 }

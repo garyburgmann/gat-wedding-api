@@ -10,6 +10,7 @@ router.use(bodyParser.json());
 const AuthController = require('../controllers/AuthController');
 // router.post('/auth/register', AuthController.register);
 router.post('/auth/login', AuthController.login);
+router.get('/auth/me', VerifyToken, AuthController.me);
 
 const UserController = require('../controllers/UserController');
 router.get('/users', UserController.list);

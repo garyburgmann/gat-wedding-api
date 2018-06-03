@@ -8,7 +8,7 @@ module.exports = {
   setToken: (payload) => {
     // console.log(payload, APP_SECRET);
     return jwt.sign(payload, APP_SECRET, {
-      expiresIn: 60 * 60 * 24 // expires in 24 hours - in seconds
+      expiresIn: 60 * 60 * 4 // expires in 4 hours - in seconds
     });
     // console.log(token);
     // return token;
