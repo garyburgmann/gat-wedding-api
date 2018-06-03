@@ -5,6 +5,7 @@ var RSVPSchema = new mongoose.Schema({
   names: { type: String, required: true },
   email: { type: String, required: true, index: { unique: true } },
   attendance: { type: Boolean, required: true },
+  phone: { type: String },
   noSeafood: { type: Boolean, required: true },
   seafood: { type: Boolean, required: true },
   vegetarian: { type: Boolean, required: true },

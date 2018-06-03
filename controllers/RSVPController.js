@@ -6,8 +6,8 @@ exports.create = async (req, res) => {
     const rsvp = await RSVP.findOne({email: req.body.email});
     if (rsvp) {
       return res.status(409).send({
-        success: false, 
-        message: 'RSVP exists', 
+        success: false,
+        message: 'RSVP exists',
         data: rsvp
       });
     }
@@ -16,36 +16,38 @@ exports.create = async (req, res) => {
   RSVP.create(req.body)
     .then(rsvp => {
       return res.status(201).send({
-        success: true,  
-        message: 'New rsvp successfully created', 
+        success: true,
+        message: 'New rsvp successfully created',
         data: rsvp
       });
     })
     .catch(err => {
-      return res.status(400).send({ 
-        success: false, 
-        message: 'There was a problem adding the information to the database.', 
+      return res.status(400).send({
+        success: false,
+        message: 'There was a problem adding the information to the database.',
         errors: err
       });
     });
-} 
+}
 
 exports.update = async (req, res) => {
 
   RSVP.findByIdAndUpdate(req.params.id, req.body, {new: true})
     .then(rsvp => {
+      // console.log('RSVP: ', rsvp);
       return res.status(201).send({
-        success: true,  
-        message: 'RSVP updated successfully', 
+        success: true,
+        message: 'RSVP updated successfully',
         data: rsvp
       });
     })
     .catch(err => {
-      return res.status(400).send({ 
-        success: false, 
-        message: 'There was a problem adding the information to the database.', 
+      // console.log('RSVP ERR: ', err);
+      return res.status(400).send({
+        success: false,
+        message: 'There was a problem adding the information to the database.',
         errors: err
       });
     });
- 
-} 
+
+}
